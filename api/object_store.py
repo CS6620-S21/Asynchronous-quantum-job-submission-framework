@@ -16,7 +16,6 @@
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-
 """Object Store Helper Library.
 
 This library contains all the methods we would be using to interact with the object store 
@@ -24,8 +23,10 @@ and other helper methods we need for file operations.
 """
 
 from copy import Error
+from botocore.exceptions import ClientError
 import boto3
 import os
+import json
 import logging
 
 COMPLETED_BUCKET = os.getenv("COMPLETED_BUCKET")
@@ -67,5 +68,17 @@ class ObjectStore:
         """
         pass
 
-    def get_result():
-        pass
+    # This method takes in the name(uuid) of the job object as key, fetches it from the completed bucket
+    # and returns it as a JSON Object.
+    def get_result(self, key: str) -> json:
+        try:
+            response = self.s3.get_object(Bucket=COMPLETED_BUCKET, Key=key)
+            content = response['Body']
+            json_object = json.loads(content.read())
+            return json_object
+        except ClientError as ex:
+            if ex.response['Error']['Code'] == 'NoSuchKey':
+                logging.error('No object found - returning empty')
+            else:
+                raise
+

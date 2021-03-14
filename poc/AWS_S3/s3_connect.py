@@ -39,3 +39,8 @@ except ClientError as ex:
         print('No object found - returning empty')
     else:
         raise
+
+region = 'us-east-2'
+# location = {'LocationConstraint': region}
+# s3_client = boto3.client('s3',)
+s3.create_bucket(ACL='private', Bucket="pend201023")
