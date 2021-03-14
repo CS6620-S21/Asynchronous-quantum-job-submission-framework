@@ -68,9 +68,14 @@ class ObjectStore:
         """
         pass
 
-    # This method takes in the name(uuid) of the job object as key, fetches it from the completed bucket
-    # and returns it as a JSON Object.
     def get_result(self, key: str) -> json:
+        """
+        This method takes in the name(job id) of the job object as key, fetches it from the completed bucket
+        and returns it as a JSON Object.
+        :param key: Name of the object(job id).
+        :return: Json object if an object with the same name as the key is found in the bucket. None is returned
+        If there is no object with the same name as the key.
+        """
         try:
             response = self.s3.get_object(Bucket=COMPLETED_BUCKET, Key=key)
             content = response['Body']
@@ -79,6 +84,7 @@ class ObjectStore:
         except ClientError as ex:
             if ex.response['Error']['Code'] == 'NoSuchKey':
                 logging.error('No object found - returning empty')
+                return None
             else:
                 raise
 
