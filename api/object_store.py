@@ -79,16 +79,16 @@ class ObjectStore:
             return False
 
 
-    def get_result(self, key: str) -> json:
+    def get_object(self, key: str, bucket_name: str) -> json:
         """
-        This method takes in the name(job id) of the job object as key, fetches it from the completed bucket
+        This method takes in the name(job id) of the job object as key, fetches it from the the passed bucket name
         and returns it as a JSON Object.
         :param key: Name of the object(job id).
         :return: Json object if an object with the same name as the key is found in the bucket. None is returned
         If there is no object with the same name as the key.
         """
         try:
-            response = self.s3.get_object(Bucket=COMPLETED_BUCKET, Key=key)
+            response = self.s3.get_object(Bucket=bucket_name, Key=key)
             content = response['Body']
             json_object = json.loads(content.read())
             return json_object
