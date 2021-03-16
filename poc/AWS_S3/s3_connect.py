@@ -54,3 +54,7 @@ s3.put_object(
      Bucket=bucket,
      Key='4568.json'
 )
+
+
+# Delete object
+s3.delete_object(Bucket=bucket, Key='4568.json')
