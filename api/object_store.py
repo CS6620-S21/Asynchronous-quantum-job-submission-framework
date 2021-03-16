@@ -58,7 +58,6 @@ class ObjectStore:
                                 ACL = "private",
                                 Bucket=bucket,
                             )
-
     
     def put_object(self, job_body: dict, file_name: str, bucket_name: str) -> bool:
         """
@@ -72,17 +71,32 @@ class ObjectStore:
             )
             return True
         except ClientError as ex:
-            logging.error("Object couldn't be inserted")
+            logging.error("Object couldn't be inserted", ex)
             return False
         except Exception as ex:
             logging.error("Object couldn't be inserted", ex)
             return False
 
+    def delete_object(self, key: str, bucket_name: str) -> bool:
+        """
+        Takes in a name of a file and removes the file from the specified bucket.
+        Returns a boolean which is true if the operation is successfully. false if it fails.
+        :param bucket_name: The bucket from which to delete the file.
+        :param key: The name of the file to be removed from the pending bucket.
+        :return: true if the remove operation is successful, false if it isn't.
+        """
+        try:
+            self.s3.delete_object(Bucket=bucket_name, Key=key)
+            return True
+        except ClientError as ex:
+            logging.error("Removing file failed", ex)
+            return False
 
     def get_object(self, key: str, bucket_name: str) -> json:
         """
         This method takes in the name(job id) of the job object as key, fetches it from the the passed bucket name
         and returns it as a JSON Object.
+        :param bucket_name: The name of the bucket from which to fetch the file.
         :param key: Name of the object(job id).
         :return: Json object if an object with the same name as the key is found in the bucket. None is returned
         If there is no object with the same name as the key.
