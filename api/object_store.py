@@ -60,13 +60,24 @@ class ObjectStore:
                             )
 
     
-    def create_job(job_body: dict, backend_id: str = None) -> str:
+    def put_object(self, job_body: dict, file_name: str, bucket_name: str) -> bool:
         """
-        If backend_id is null, put in pending bucket anyway without backend id. 
-        Generate metadata json also.
-        Returns the job id to user (this we generate.)
-        """
-        pass
+        Takes an json and a file name and puts the object in the s3 bucket 
+        """ 
+        try:
+            self.s3.put_object(
+                Body=str(json.dumps(job_body)),
+                Bucket=bucket_name,
+                Key=file_name
+            )
+            return True
+        except ClientError as ex:
+            logging.error("Object couldn't be inserted")
+            return False
+        except Exception as ex:
+            logging.error("Object couldn't be inserted", ex)
+            return False
+
 
     def get_result(self, key: str) -> json:
         """
