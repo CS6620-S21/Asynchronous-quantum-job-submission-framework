@@ -1,0 +1,4 @@
+{
+    "result": "{\"backend_name\": \"qasm_simulator\", \"backend_version\": \"2.0.0\", \"qobj_id\": \"e533279d-3cd7-4bcd-a5a8-962f3547f899\", \"job_id\": \"730969ad-ac1f-4269-b63a-68de73597a4a\", \"success\": true, \"results\": [{\"shots\": 1024, \"success\": true, \"data\": {\"counts\": {\"0x3\": 527, \"0x0\": 497}}, \"meas_level\": 2, \"header\": {\"qubit_labels\": [[\"q\", 0], [\"q\", 1]], \"n_qubits\": 2, \"qreg_sizes\": [[\"q\", 2]], \"clbit_labels\": [[\"c\", 0], [\"c\", 1]], \"memory_slots\": 2, \"creg_sizes\": [[\"c\", 2]], \"name\": \"circuit7\", \"global_phase\": 0.0}, \"status\": \"DONE\", \"name\": \"circuit7\", \"seed_simulator\": 757046839, \"time_taken\": 0.008789777755737305}], \"status\": \"COMPLETED\", \"header\": {}, \"time_taken\": 0.008850336074829102}",
+    "timestamp": "2021-03-12 15:46:32.213194"
+}
