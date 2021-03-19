@@ -42,9 +42,8 @@ async def getResult(job_id: str):
         if result is None:
             result = ob.get_object(job_id_extension,PENDING_BUCKET)
             if result is None:
-                return PlainTextResponse(str("Given job Id doesn't exist"), status_code=404)
-            return PlainTextResponse(str("Result not available,job still pending"), status_code=404)
-
+                return HTTPException(status_code=404, detail="Item not found")
+            return HTTPException(status_code=201, detail="Result not available,job still pending")
 
 
         else:
