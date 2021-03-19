@@ -1,8 +1,10 @@
 from qiskit import *
 from qiskit import IBMQ
 from client import *
+import os
 
-IBMQ.save_account('507a5316e425f15330cfdaa0e7fc473429105af797d5b11612a4ef511ca37af70ec3116afde55fad56352b92a9b7636c921b1b35c0ee7334f65bba27f7d1e692')
+token=os.getenv('TOKEN')
+IBMQ.save_account(token)
 IBMQ.load_account() # Load account from disk
 print(IBMQ.providers())  # List all available providers
 
