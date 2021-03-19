@@ -27,13 +27,18 @@ print(job.status())
 backend_temp = job.backend()
 backend_temp
 
+
 print("The job ID of the job is:")
-job.job_id()
+jobID=job.job_id()
+print(jobID)
 
-#Getting the job result
+#Getting the job using job ID
+print("The job returned by the job ID" + jobID + "is:")
+job_returned = backend.retrieve_job(jobID)
+print(job_returned)
 
-result = job.result()
-print("The job result is:")
+
+#Getting the result of the job returned
+result = job_returned.result()
+print("The result of the job returned is:")
 print(result)
-counts = result.get_counts()
-print(counts)
