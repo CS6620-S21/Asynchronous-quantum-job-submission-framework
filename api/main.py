@@ -3,8 +3,8 @@ from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import RequestValidationError, HTTPException
 from fastapi.responses import JSONResponse
 # from controller import Controller
-from starlette.responses import PlainTextResponse
 
+from response_models import Result
 from object_store import ObjectStore
 import boto3
 
@@ -31,22 +31,22 @@ async def homepage(request: Request):
     return("Welcome to Async Job Framework")
 
 
-@app.get("/getResult/{job_id}")
+getResponses = {
+                404: {"result": Result},
+                102: {"result": Result}
+            }
+@app.get("/getResult/{job_id}", responses=getResponses)
 async def getResult(job_id: str):
     """Get the job id and try fetching the result."""
-    # TODO add error response for user, add logic to check in pending bucket if not found in completed.
     job_id_extension = str(job_id).strip()+".json"
     try:
         result = ob.get_object(job_id_extension,COMPLETED_BUCKET)
-        #check if result is available or not in completed bucket and if not available check for the job in pending bucket
+        # check if result is available or not in completed bucket and if not available check for the job in pending bucket
         if result is None:
             result = ob.get_object(job_id_extension,PENDING_BUCKET)
             if result is None:
-                return PlainTextResponse(str("Given job Id doesn't exist"), status_code=404)
-            return PlainTextResponse(str("Result not available,job still pending"), status_code=404)
-
-
-
+                return JSONResponse(status_code=404, content={"result": "No job found with given ID."})
+            return JSONResponse(status_code=102, content={"result": "Job pending or being fetched."})
         else:
             return result
     except Exception as ex:
