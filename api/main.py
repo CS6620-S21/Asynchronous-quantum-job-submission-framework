@@ -4,6 +4,7 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 # from controller import Controller
 from object_store import ObjectStore
+import boto3
 
 import pickle
 import json, os
@@ -13,7 +14,8 @@ import numpy
 
 COMPLETED_BUCKET = os.getenv("COMPLETED_BUCKET")
 PENDING_BUCKET = os.getenv("PENDING_BUCKET")
-# Initialize ObjectStore 
+s3 = boto3.client("s3")
+# Initialize ObjectStore
 try:
     ob = ObjectStore()
 except Exception as ex:
@@ -30,11 +32,21 @@ async def homepage(request: Request):
 @app.get("/getResult/{job_id}")
 async def getResult(job_id: str):
     """Get the job id and try fetching the result."""
-    # TODO add error response for user, add logic to check in pending bucket if not found in completed. 
+    # TODO add error response for user, add logic to check in pending bucket if not found in completed.
     job_id_extension = str(job_id).strip()+".json"
     try:
-        result = ob.get_object(job_id_extension, COMPLETED_BUCKET)
-        return result
+        result = ob.get_object(job_id_extension,COMPLETED_BUCKET)
+        #check if result is available or not in completed bucket and if not available check for the job in pending bucket
+        if result is None:
+            for key in s3.list_objects(Bucket='quantumpending')['Contents']:
+                res= (key['Key'])
+                if(res==job_id_extension):
+                    return(key['Key'])
+                else:
+                    res= "No job with given key exists"
+                    return res
+        else:
+            return result
     except Exception as ex:
         logging.error("Error is -", ex)
 
