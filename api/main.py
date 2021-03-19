@@ -1,8 +1,10 @@
 from fastapi import FastAPI, Request, status
 from fastapi.encoders import jsonable_encoder
-from fastapi.exceptions import RequestValidationError
+from fastapi.exceptions import RequestValidationError, HTTPException
 from fastapi.responses import JSONResponse
 # from controller import Controller
+from starlette.responses import PlainTextResponse
+
 from object_store import ObjectStore
 import boto3
 
@@ -41,10 +43,11 @@ async def getResult(job_id: str):
             for key in s3.list_objects(Bucket='quantumpending')['Contents']:
                 res= (key['Key'])
                 if(res==job_id_extension):
-                    return(key['Key'])
+                    return PlainTextResponse(str("No results found,Job still pending"), status_code=201)
+
                 else:
-                    res= "No job with given key exists"
-                    return res
+                    return PlainTextResponse(str("Given job Id doesn't exist"), status_code=404)
+
         else:
             return result
     except Exception as ex:
