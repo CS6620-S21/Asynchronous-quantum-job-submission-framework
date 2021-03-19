@@ -16,7 +16,7 @@ import numpy
 
 COMPLETED_BUCKET = os.getenv("COMPLETED_BUCKET")
 PENDING_BUCKET = os.getenv("PENDING_BUCKET")
-s3 = boto3.client("s3")
+
 # Initialize ObjectStore
 try:
     ob = ObjectStore()
@@ -40,13 +40,12 @@ async def getResult(job_id: str):
         result = ob.get_object(job_id_extension,COMPLETED_BUCKET)
         #check if result is available or not in completed bucket and if not available check for the job in pending bucket
         if result is None:
-            for key in s3.list_objects(Bucket='quantumpending')['Contents']:
-                res= (key['Key'])
-                if(res==job_id_extension):
-                    return PlainTextResponse(str("No results found,Job still pending"), status_code=201)
+            result = ob.get_object(job_id_extension,PENDING_BUCKET)
+            if result is None:
+                return PlainTextResponse(str("Given job Id doesn't exist"), status_code=404)
+            return PlainTextResponse(str("Result not available,job still pending"), status_code=404)
 
-                else:
-                    return PlainTextResponse(str("Given job Id doesn't exist"), status_code=404)
+
 
         else:
             return result
