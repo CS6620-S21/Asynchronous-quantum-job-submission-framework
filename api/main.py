@@ -3,17 +3,41 @@ from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 # from controller import Controller
+from object_store import ObjectStore
 
 import pickle
-import json
+import json, os
+import logging
 
 import numpy
+
+COMPLETED_BUCKET = os.getenv("COMPLETED_BUCKET")
+PENDING_BUCKET = os.getenv("PENDING_BUCKET")
+# Initialize ObjectStore 
+try:
+    ob = ObjectStore()
+except Exception as ex:
+    logging.error("Error is -", ex)
+
 
 app = FastAPI()
 
 @app.get("/")
 async def homepage(request: Request):
     return("Welcome to Async Job Framework")
+
+
+@app.get("/getResult/{job_id}")
+async def getResult(job_id: str):
+    """Get the job id and try fetching the result."""
+    # TODO add error response for user, add logic to check in pending bucket if not found in completed. 
+    job_id_extension = str(job_id).strip()+".json"
+    try:
+        result = ob.get_object(job_id_extension, COMPLETED_BUCKET)
+        return result
+    except Exception as ex:
+        logging.error("Error is -", ex)
+
 
 @app.post("/submit/")
 async def submit(request: Request):
