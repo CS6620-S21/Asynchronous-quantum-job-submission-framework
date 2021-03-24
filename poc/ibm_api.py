@@ -1,6 +1,7 @@
 from qiskit import *
 from qiskit import IBMQ
 from client import *
+from qiskit.compiler import transpile, assemble
 import os
 
 token=os.getenv('TOKEN')
