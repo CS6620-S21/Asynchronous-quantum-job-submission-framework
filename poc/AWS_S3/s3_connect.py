@@ -58,3 +58,15 @@ s3.put_object(
 
 # Delete object
 s3.delete_object(Bucket=bucket, Key='4568.json')
+
+
+# Fetch all the objects in a bucket
+try:
+    files = []
+    obj_list = s3.list_objects_v2(Bucket=bucket)
+    if obj_list.get('Contents'):
+        for key in obj_list['Contents']:
+            files.append(key['Key'])
+    print(files)
+except ClientError as ex:
+    print("something went wrong!")
