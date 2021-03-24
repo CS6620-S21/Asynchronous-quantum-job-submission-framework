@@ -18,8 +18,12 @@ backend = provider.get_backend('ibmq_qasm_simulator')
 print(backend)
 
 #Submitting a job
+#job = execute(qc, backend) (Synchronous)
 
-job = execute(qc, backend)
+#Asynchronous using run
+mapped_circuit = transpile(qc, backend=backend)
+qobj = assemble(mapped_circuit, backend=backend, shots=1024)
+job = backend.run(qobj)
 
 print("Printing the status of the job")
 print(job.status())
