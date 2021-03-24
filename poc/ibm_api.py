@@ -1,7 +1,9 @@
 from qiskit import *
 from qiskit import IBMQ
-from client import *
+import json
+from client import QobjEncoder
 from qiskit.compiler import transpile, assemble
+from qiskit.qobj.qasm_qobj import QasmQobj as QasmQobj
 import os
 
 token=os.getenv('TOKEN')
@@ -22,9 +24,22 @@ print(backend)
 #job = execute(qc, backend) (Synchronous)
 
 #Asynchronous using run
+qc = QuantumCircuit(2, 2)
+qc.h(0)
+qc.cx(0, 1)
+qc.measure([0, 1], [0, 1])
 mapped_circuit = transpile(qc, backend=backend)
 qobj = assemble(mapped_circuit, backend=backend, shots=1024)
-job = backend.run(qobj)
+
+qasm_obj_dict = qobj.to_dict([True])
+qasm_obj_json = json.dumps(qasm_obj_dict, cls=QobjEncoder)
+#The above code is to mock the body of the post API request from the client.
+
+
+load = json.loads(qasm_obj_json)
+recieved_qobj = QasmQobj.from_dict(load)
+
+job = backend.run(recieved_qobj)
 
 print("Printing the status of the job")
 print(job.status())
