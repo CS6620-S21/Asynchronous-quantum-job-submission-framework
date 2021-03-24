@@ -23,11 +23,13 @@ and other helper methods we need for file operations.
 """
 
 from copy import Error
+from typing import List
 from botocore.exceptions import ClientError
 import boto3
 import os
 import json
 import logging
+
 
 COMPLETED_BUCKET = os.getenv("COMPLETED_BUCKET")
 PENDING_BUCKET = os.getenv("PENDING_BUCKET")
@@ -113,3 +115,16 @@ class ObjectStore:
             else:
                 raise
 
+    def get_all_objects(self, bucket_name: str) -> List:
+        """
+        Takes an bucket and returns any 1000 objects in it.
+        """
+        try:
+            files = []
+            obj_list = self.s3.list_objects_v2(Bucket=bucket_name)
+            if obj_list.get('Contents'):
+                for key in obj_list['Contents']:
+                    files.append(key['Key'])
+            return files
+        except ClientError as ex:
+            logging.error(ex)
