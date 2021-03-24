@@ -23,6 +23,7 @@ and other helper methods we need for file operations.
 """
 
 from copy import Error
+from typing import List
 from botocore.exceptions import ClientError
 import boto3
 import os
