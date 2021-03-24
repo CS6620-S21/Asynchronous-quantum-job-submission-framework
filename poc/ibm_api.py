@@ -6,7 +6,7 @@ from qiskit.compiler import transpile, assemble
 from qiskit.qobj.qasm_qobj import QasmQobj as QasmQobj
 import os
 
-token=os.getenv('TOKEN')
+token=os.getenv('BACKEND_TOKEN')
 IBMQ.save_account(token)
 IBMQ.load_account() # Load account from disk
 print(IBMQ.providers())  # List all available providers
