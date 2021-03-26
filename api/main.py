@@ -35,18 +35,20 @@ getResponses = {
                 404: {"result": Result},
                 102: {"result": Result}
             }
-@app.post("/getResult/{job_id}", responses=getResponses)
-async def getResult(job_id: str):
+@app.post("/getResult/", responses=getResponses)
+async def getResult(request: Request):
+
     """Get the job id and try fetching the result."""
-    job_id_extension = str(job_id).strip()+".json"
+    job_id = body['job_id']
+    job_id_extension = str(job_id) + ".json"
     try:
         result = ob.get_object(job_id_extension,COMPLETED_BUCKET)
         # check if result is available or not in completed bucket and if not available check for the job in pending bucket
         if result is None:
             result = ob.get_object(job_id_extension,PENDING_BUCKET)
             if result is None:
-                return HTTPException(status_code=404, detail="Item not found")
-            return HTTPException(status_code=204, detail="Result pending")
+                return JSONResponse(status_code=404, content={"result": "No job found with given ID."})
+            return JSONResponse(status_code=102, content={"result": "Job pending or being fetched."})
         else:
             return result
     except Exception as ex:
