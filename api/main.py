@@ -37,7 +37,7 @@ getResponses = {
             }
 @app.post("/getResult/", responses=getResponses)
 async def getResult(request: Request):
-
+    body = await request.json()
     """Get the job id and try fetching the result."""
     job_id = body['job_id']
     job_id_extension = str(job_id) + ".json"
@@ -48,7 +48,7 @@ async def getResult(request: Request):
             result = ob.get_object(job_id_extension,PENDING_BUCKET)
             if result is None:
                 return JSONResponse(status_code=404, content={"result": "No job found with given ID."})
-            return JSONResponse(status_code=102, content={"result": "Job pending or being fetched."})
+            return JSONResponse(status_code=201, content={"result": "Job pending or being fetched."})
         else:
             return result
     except Exception as ex:
