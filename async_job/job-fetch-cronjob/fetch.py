@@ -25,7 +25,7 @@ And moves the completed jobs to the Completed Bucket.
 import os, logging, json
 from qiskit import IBMQ
 from async_job.api.object_store import ObjectStore
-from async_job.api.q_obj_encoder import QobjEncoder
+# from async_job.api.q_obj_encoder import QobjEncoder
 from qiskit.providers.jobstatus import JobStatus, JOB_FINAL_STATES
 from qiskit.providers.exceptions import QiskitBackendNotFoundError
 from datetime import datetime
@@ -45,7 +45,6 @@ except Exception as ex:
 def init_backend():
     """Returns the backend to work with in the cron job"""
     token=os.getenv('BACKEND_TOKEN')
-    print(token)
     IBMQ.save_account(token)
     IBMQ.load_account()
     provider = IBMQ.get_provider(hub='ibm-q')
@@ -70,24 +69,22 @@ def _generateResult(result_status, result_json):
             "result": str(result_status),
             "timestamp": str(datetime.now())
         }
-    return result_status
+    return result_to_write
 
 def run_fetch_job():
     backend = init_backend()
-    print(backend)
+    logging.info(f"Running with backend - {backend}")
     # Run for all pending objects 
     for pending_key in ob.get_all_objects(PENDING_BUCKET):
         # Process the pending object
         try:
-            print(pending_key, BACKEND)
-            job_fetched = backend.retrieve_job("605b99ca8057906f0a9dc2de")
+            job_fetched = backend.retrieve_job(pending_key)
             # Check status in final state or not.
             job_status = job_fetched.status()
-            print(job_status)
             if job_status in JOB_FINAL_STATES:
                 result = job_fetched.result()
                 result_dict = result.to_dict()
-                result_json = json.dumps(result_dict, cls=QobjEncoder)
+                result_json = json.dumps(result_dict, indent=4, sort_keys=True, default=str)
                 result_json_object = _generateResult(result_status=job_status, result_json=result_json)
                 try:
                     ob.put_object(job_body=result_json_object, file_name=pending_key, bucket_name=COMPLETED_BUCKET)
@@ -98,6 +95,8 @@ def run_fetch_job():
                 logging.info(f"Skipping job with id - {pending_key} as not in final state.")
         except Exception as ex:
             logging.error(f"Pending job {pending_key} couldn't be processed.", ex)
+    
+    logging.info(f"Completed running for all pending objects.")
 
 
 if __name__ == "__main__":

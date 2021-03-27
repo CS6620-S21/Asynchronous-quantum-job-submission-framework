@@ -15,13 +15,13 @@ print(provider.backends())
 
 # print("Selecting backend ibmq_qasm_simulator...")
 # backend = provider.get_backend('ibmq_qasm_simulator')
-print("Selecting backend ibmq_santiago...")
-backend = provider.get_backend('ibmq_santiago')
+print("Selecting backend ibmq_qasm_simulator...")
+backend = provider.get_backend('ibmq_qasm_simulator')
 print(backend)
 
 #Getting the job using job ID
-print("The job returned by the job ID 605b939f77f4da2489a04722 is:")
-job_returned = backend.retrieve_job("605b99ca8057906f0a9dc2de")
+print("The job returned by the job ID 605e78a02fc7403db7ba812f is:")
+job_returned = backend.retrieve_job("605e78a02fc7403db7ba812f")
 print(job_returned)
 
 quantum_job_status = job_returned.status()

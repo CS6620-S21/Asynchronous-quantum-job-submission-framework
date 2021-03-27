@@ -16,6 +16,8 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 import json
+import numpy
+from datetime import date, datetime
 from qiskit.qobj.qasm_qobj import QasmQobj as QasmQobj
 
 
@@ -31,4 +33,6 @@ class QobjEncoder(json.JSONEncoder):
         if isinstance(obj, complex):
             print('----------------', obj)
             return (obj.real, obj.imag)
+        if isinstance(obj, (datetime, date)):
+            return obj.isoformat()
         return json.JSONEncoder.default(self, obj)
