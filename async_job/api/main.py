@@ -37,10 +37,10 @@ getResponses = {
             }
 @app.post("/getResult/", responses=getResponses)
 async def getResult(request: Request):
-    body = await request.json()
     """Get the job id and try fetching the result."""
+    body = await request.json()
     job_id = body['job_id']
-    job_id_extension = str(job_id) + ".json"
+    job_id_extension = str(job_id)
     try:
         result = ob.get_object(job_id_extension,COMPLETED_BUCKET)
         # check if result is available or not in completed bucket and if not available check for the job in pending bucket
