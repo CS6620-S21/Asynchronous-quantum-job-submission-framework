@@ -34,12 +34,14 @@ qasm_obj = assemble(transpiled_qc)
 
 # print(data)
 qasm_obj_dic = qasm_obj.to_dict([True])
+print(qasm_obj_dic)
 # print("qasm_obj_dic: \n", qasm_obj_dic)
 # print("type of qasm_obj_dic: ", type(qasm_obj_dic))
 
 # Convert qasm_obj_dic to json for sending over
 
 qasm_obj_json = json.dumps(qasm_obj_dic, cls=QobjEncoder)
+print(qasm_obj_dic)
 # print("type of qasm_obj_json: ", type(qasm_obj_json))
 
 # Logic to get json serialized and load it and run it.

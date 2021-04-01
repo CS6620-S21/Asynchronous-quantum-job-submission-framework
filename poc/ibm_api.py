@@ -1,3 +1,4 @@
+from async_job.api.object_store import ObjectStore
 from qiskit import *
 from qiskit import IBMQ
 import json
@@ -62,3 +63,13 @@ print(job_returned)
 result = job_returned.result()
 print("The result of the job returned is:")
 print(result)
+result_dict = result.to_dict()
+print("**********************************************")
+print("result_dict: ", result_dict)
+print("Type of result_dict: ", type(result_dict))
+
+result_json = json.dumps(result_dict, indent=4, sort_keys=True, default=str)
+print("Type of result json: ", type(result_json))
+print(result_json)
+# ob = ObjectStore()
+# ob.put_object(job_body=result_json, file_name=jobID, bucket_name="completed-bucket-sp21cs6620")
