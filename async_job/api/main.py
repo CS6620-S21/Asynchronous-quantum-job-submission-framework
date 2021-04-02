@@ -2,11 +2,16 @@ from fastapi import FastAPI, Request, status
 from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import RequestValidationError, HTTPException
 from fastapi.responses import JSONResponse
+from qiskit.providers import backend
 # from controller import Controller
 
 from response_models import Result
 from object_store import ObjectStore
+from qiskit import IBMQ
+from qiskit.providers.exceptions import QiskitBackendNotFoundError
+from qiskit.qobj.qasm_qobj import QasmQobj as QasmQobj
 import boto3
+from datetime import datetime
 
 import pickle
 import json, os
@@ -14,6 +19,7 @@ import logging
 
 import numpy
 
+BACKEND = os.getenv("BACKEND")
 COMPLETED_BUCKET = os.getenv("COMPLETED_BUCKET")
 PENDING_BUCKET = os.getenv("PENDING_BUCKET")
 
@@ -23,6 +29,34 @@ try:
 except Exception as ex:
     logging.error("Error is -", ex)
 
+# Initialize Backend 
+def init_backend():
+    """Returns the backend to work with in the cron job"""
+    token=os.getenv('BACKEND_TOKEN')
+    IBMQ.save_account(token)
+    IBMQ.load_account()
+    provider = IBMQ.get_provider(hub='ibm-q')
+    IBMQ.get_provider(group='open')
+    try:
+        backend = provider.get_backend(BACKEND)
+    except QiskitBackendNotFoundError as er:
+        logging.error("Qiskit Backend not found, please check backend in .env.")
+        raise er
+    return backend
+
+try:
+    backend = init_backend()
+except Exception as ex:
+    logging.error("Error is -", ex)
+
+
+def _generateResult(request_body):
+    """Generate input json object."""
+    result_to_write = {
+        "input": request_body,
+        "timestamp": str(datetime.now())
+    }
+    return result_to_write
 
 app = FastAPI()
 
@@ -57,12 +91,21 @@ async def getResult(request: Request):
 
 @app.post("/submit/")
 async def submit(request: Request):
-    print("request: ", request)
-    # body = await request.json()
-    # print("--------------------------------------------------------------")
-    # print("Body: \n", body)
-    # print("Type of body", type(body))
-    # ctl = Controller()
-    # # ctl.submit(body)
+    """Get the job id and submit the job to the selected backend."""
+    body = await request.json()
+    recieved_qobj = QasmQobj.from_dict(body)
+    try:
+        job = backend.run(recieved_qobj)
+    except Exception as ex:
+        return JSONResponse(status_code=500, content={"Error": "Job couldn't be submitted to the backend.", "Trace": ex})
+    jobID = job.job_id()
+    input_json = _generateResult(body)
+    try:
+        ob.put_object(job_body=input_json, file_name=jobID, bucket_name=PENDING_BUCKET)
+    except Exception:
+        logging.error("Failed to write into completed bucket.")
+    return JSONResponse(status_code=200, 
+                        content={"job_id": jobID, "backend": BACKEND}
+                        )
 
-    # return ctl.submit(body)
+
