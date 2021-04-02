@@ -6,6 +6,7 @@ from fastapi.responses import JSONResponse
 
 from response_models import Result
 from object_store import ObjectStore
+from ibm_simulator import IBMSimulator
 import boto3
 
 import pickle
@@ -20,6 +21,11 @@ PENDING_BUCKET = os.getenv("PENDING_BUCKET")
 # Initialize ObjectStore
 try:
     ob = ObjectStore()
+except Exception as ex:
+    logging.error("Error is -", ex)
+
+try:
+    sm = IBMSimulator()
 except Exception as ex:
     logging.error("Error is -", ex)
 
@@ -57,12 +63,6 @@ async def getResult(request: Request):
 
 @app.post("/submit/")
 async def submit(request: Request):
-    print("request: ", request)
-    # body = await request.json()
-    # print("--------------------------------------------------------------")
-    # print("Body: \n", body)
-    # print("Type of body", type(body))
-    # ctl = Controller()
-    # # ctl.submit(body)
-
-    # return ctl.submit(body)
+    body = await request.json()
+    result = sm.submit_circuit(body)
+    return str(body)
