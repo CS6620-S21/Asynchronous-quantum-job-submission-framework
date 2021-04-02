@@ -2,7 +2,7 @@
 from qiskit import *
 from qiskit import IBMQ
 import json
-from client import QobjEncoder
+from client1 import QobjEncoder
 from qiskit.compiler import transpile, assemble
 from qiskit.qobj.qasm_qobj import QasmQobj as QasmQobj
 import os
