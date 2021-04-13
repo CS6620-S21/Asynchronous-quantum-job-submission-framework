@@ -1,0 +1,21 @@
+# Use an official fedora 32 image
+FROM fedora:32
+
+#setup pip
+RUN yum update -y \
+    && yum install -y python3 python3-libs python3-devel python3-pip
+
+
+#pipenv installation
+RUN pip3 install pipenv
+
+WORKDIR /job-fetch-cronjob
+
+COPY . /job-fetch-cronjob
+
+#install project dependencies
+RUN pipenv install
+
+CMD ["pipenv run python3 async_job/job-fetch-cronjob/fetch.py"]
+
+
