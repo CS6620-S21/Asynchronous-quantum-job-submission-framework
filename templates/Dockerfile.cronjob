@@ -1,5 +1,5 @@
 # Use an official fedora 32 image
-FROM fedora:32
+FROM registry.fedoraproject.org/fedora:32
 
 #setup pip
 RUN yum update -y \

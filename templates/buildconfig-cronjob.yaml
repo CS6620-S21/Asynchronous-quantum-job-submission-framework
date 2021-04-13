@@ -1,0 +1,27 @@
+---
+kind: BuildConfig
+apiVersion: "build.openshift.io/v1"
+metadata:
+  name: async-job
+spec:
+  output:
+    to:
+      kind: ImageStreamTag
+      name: job-fetch-imagestream:latest
+  runPolicy: Serial
+  source:
+    type: Git
+    git:
+      uri: https://github.com/CS6620-S21/Asynchronous-quantum-job-submission-framework
+      ref: templates
+  strategy:
+    type: Docker
+    dockerStrategy:
+      dockerfilePath: templates/Dockerfile.cronjob
+  triggers:
+  - imageChange: {}
+    type: ImageChange
+  - type: Generic
+    generic:
+      secret: secret101
+      allowEnv: false
