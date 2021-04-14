@@ -1,0 +1,56 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: async-job
+  labels:
+    app: async-job
+spec:
+  schedule: "*/5 * * * *"
+  suspend: false
+  successfulJobsHistoryLimit: 10
+  failedJobsHistoryLimit: 2
+  concurrencyPolicy: Forbid
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - image: job-fetch-imagestream
+            name: job-fetch-imagestream
+            env:
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  key: AWS_ACCESS_KEY_ID
+                  name: asyncjob-secret
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  key: AWS_SECRET_ACCESS_KEY
+                  name: asyncjob-secret
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  key: AWS_SECRET_ACCESS_KEY
+                  name: asyncjob-secret
+            - name: BACKEND_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  key: BACKEND_TOKEN
+                  name: asyncjob-secret
+            - name: PENDING_BUCKET
+              valueFrom:
+                secretKeyRef:
+                  key: PENDING_BUCKET
+                  name: asyncjob-secret
+            - name: COMPLETED_BUCKET
+              valueFrom:
+                secretKeyRef:
+                  key: COMPLETED_BUCKET
+                  name: asyncjob-secret
+            - name: BACKEND
+              valueFrom:
+                secretKeyRef:
+                  key: BACKEND
+                  name: asyncjob-secret
+          restartPolicy: Never
