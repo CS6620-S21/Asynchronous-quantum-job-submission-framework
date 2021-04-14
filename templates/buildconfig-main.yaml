@@ -1,0 +1,27 @@
+---
+kind: BuildConfig
+apiVersion: v1
+metadata:
+  name: async-job-main
+spec:
+  output:
+    to:
+      kind: ImageStreamTag
+      name: job-fetch-main-imagestream:latest
+  runPolicy: Serial
+  source:
+    type: Git
+    git:
+      uri: https://github.com/CS6620-S21/Asynchronous-quantum-job-submission-framework
+      ref: templatess
+  strategy:
+    type: Docker
+    dockerStrategy:
+      dockerfilePath: templatess/Dockerfile.main
+  triggers:
+  - imageChange: {}
+    type: ImageChange
+  - type: Generic
+    generic:
+      secret: secret101
+      allowEnv: false
