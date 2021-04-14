@@ -1,6 +1,6 @@
 ---
 kind: BuildConfig
-apiVersion: "build.openshift.io/v1"
+apiVersion: v1
 metadata:
   name: async-job
 spec:
