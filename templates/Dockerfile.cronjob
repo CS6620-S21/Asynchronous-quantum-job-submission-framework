@@ -16,6 +16,8 @@ COPY . /job-fetch-cronjob
 #install project dependencies
 RUN pipenv install
 
+USER 1042
+
 #CMD ["pipenv run python3 async_job/job-fetch-cronjob/fetch.py"]
 
 

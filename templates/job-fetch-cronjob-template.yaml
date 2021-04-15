@@ -53,4 +53,5 @@ spec:
                 secretKeyRef:
                   key: BACKEND
                   name: asyncjob-secret
+            command: ["pipenv run python3 async_job/job-fetch-cronjob/fetch.py"]
           restartPolicy: Never
