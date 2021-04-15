@@ -1,0 +1,35 @@
+---
+kind: BuildConfig
+apiVersion: v1
+metadata:
+  name: api
+spec:
+  resources:
+    requests:
+      cpu: "1"
+      memory: 1Gi
+    limits:
+      cpu: "1"
+      memory: 1Gi
+  output:
+    to:
+      kind: ImageStreamTag
+      name: api:test
+  runPolicy: Serial
+  source:
+    type: Git
+    git:
+      uri: https://github.com/CS6620-S21/Asynchronous-quantum-job-submission-framework
+      ref: api_templates
+  strategy:
+    type: Docker
+    dockerStrategy:
+      dockerfilePath: api_templates/Dockerfile.api
+  triggers:
+  - imageChange: {}
+    type: ImageChange
+  - type: Generic
+  - type: ConfigChange
+    generic:
+      secret: secret101
+      allowEnv: false
