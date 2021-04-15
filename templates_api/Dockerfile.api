@@ -16,4 +16,4 @@ COPY . /api
 #install project dependencies
 RUN pipenv install
 
-#CMD ["pipenv run python3 api/job-fetch-cronjob/fetch.py"]
+#CMD ["pipenv run python3 async_job/api/main.py"]
