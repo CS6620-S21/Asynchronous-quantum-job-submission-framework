@@ -21,6 +21,10 @@ COPY . /job-fetch-cronjob
 #install project dependencies
 RUN pip install -r requirements.txt
 
+RUN useradd appuser && chown -R appuser /job-fetch-cronjob
+USER appuser
+
+
 CMD ["python", "async_job/job-fetch-cronjob/fetch.py"]
 
 
