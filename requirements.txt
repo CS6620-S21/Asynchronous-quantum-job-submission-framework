@@ -1,0 +1,5 @@
+fastapi
+qiskit
+numpy
+hypercorn
+boto3
