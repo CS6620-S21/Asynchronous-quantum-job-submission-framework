@@ -7,15 +7,15 @@ RUN yum update -y \
 
 
 #pipenv installation
-RUN pip3 install pipenv
+RUN pip install pipenv
 
 WORKDIR /job-fetch-cronjob
 
 COPY . /job-fetch-cronjob
 
 #install project dependencies
-RUN pipenv install
+RUN pipenv install --deploy --ignore-pipfile
 
-#CMD ["pipenv run python3 async_job/job-fetch-cronjob/fetch.py"]
+CMD ["pipenv", "run", "python", "async_job/job-fetch-cronjob/fetch.py"]
 
 
