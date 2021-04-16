@@ -1,1 +1,1 @@
-exec pipenv run python3 "async_job/job-fetch-cronjob/fetch.py"
+pipenv run python3 "async_job/job-fetch-cronjob/fetch.py"
