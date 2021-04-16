@@ -19,7 +19,7 @@ WORKDIR /job-fetch-cronjob
 COPY . /job-fetch-cronjob
 
 #install project dependencies
-RUN pipenv install
+RUN pipenv install --deploy
 
 CMD ["pipenv", "run", "python", "async_job/job-fetch-cronjob/fetch.py"]
 
