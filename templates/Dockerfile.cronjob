@@ -22,6 +22,6 @@ COPY . /job-fetch-cronjob
 #install project dependencies
 RUN pipenv install && chmod a+wrx -R ${PIPENV_CACHE_DIR}
 
-CMD ["./cronjob-app.sh"]
+CMD ["pipenv", "run", "python", "async_job/job-fetch-cronjob/fetch.py"]
 
 
