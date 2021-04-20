@@ -16,6 +16,9 @@ WORKDIR /job-fetch-cronjob
 
 COPY . /job-fetch-cronjob
 
+RUN chgrp -R 0 /job-fetch-cronjob && \
+    chmod -R g=u /job-fetch-cronjob
+
 #install project dependencies
 RUN PIPENV_VENV_IN_PROJECT=1 pipenv install --deploy
 
