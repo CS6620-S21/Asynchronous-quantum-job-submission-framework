@@ -13,7 +13,7 @@ spec:
     type: Git
     git:
       uri: https://github.com/CS6620-S21/Asynchronous-quantum-job-submission-framework
-      ref: templates
+      ref: container
   strategy:
     type: Docker
     dockerStrategy:
