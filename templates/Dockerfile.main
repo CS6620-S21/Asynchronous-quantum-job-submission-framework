@@ -1,0 +1,35 @@
+# Use a centos python 38 image for hypercorn support
+FROM centos/python-38-centos7:latest
+
+USER root
+
+ENV HOME=/api
+
+RUN mkdir -p ${HOME} && \
+    useradd -u 9000 -r -g 0 -d ${HOME} -s /sbin/nologin \
+    -c "IBMQ User" ibmq-user
+
+ENV LANG=en_US.UTF-8 \
+    PYTHONPATH=$$PWD/..
+
+#setup pip
+RUN yum update -y \
+    && yum install -y python3 python3-libs python3-devel python3-pip
+
+RUN chown -R 9000:0 ${HOME} \
+    && find ${HOME} -type d -exec chmod g+ws {} \;
+
+#pipenv installation
+RUN pip3 install pipenv
+
+WORKDIR /api
+
+COPY . /api
+
+USER 1001
+
+#install project dependencies
+RUN PIPENV_VENV_IN_PROJECT=1 pipenv install --deploy
+
+EXPOSE 5000
+CMD ["pipenv", "run", "hypercorn", "async_job/api/main:app", "--bind", "0.0.0.0:5000"]

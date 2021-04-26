@@ -1,0 +1,87 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: null
+  labels:
+    app: ibmqo
+  name: ibmqo
+spec:
+  ports:
+    - port: 5000
+      protocol: TCP
+      targetPort: 5000
+  selector:
+    tier: ibmqo
+status:
+  loadbalancer: {}
+
+---
+apiVersion: v1
+kind: Route
+metadata:
+  name: ibmqo
+spec:
+  to:
+    kind: Service
+    name: ibmqo
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ibmqo
+  labels:
+spec:
+  selector:
+    matchLabels:
+      tier: ibmqo
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        tier: ibmqo
+    spec:
+      containers:
+        - image: job-fetch-main-imagestream
+          name: ibmqo
+          env:
+          - name: AWS_ACCESS_KEY_ID
+            valueFrom:
+              secretKeyRef:
+                key: AWS_ACCESS_KEY_ID
+                name: asyncjob-secret
+          - name: AWS_SECRET_ACCESS_KEY
+            valueFrom:
+              secretKeyRef:
+                key: AWS_SECRET_ACCESS_KEY
+                name: asyncjob-secret
+          - name: AWS_SECRET_ACCESS_KEY
+            valueFrom:
+              secretKeyRef:
+                key: AWS_SECRET_ACCESS_KEY
+                name: asyncjob-secret
+          - name: BACKEND_TOKEN
+            valueFrom:
+              secretKeyRef:
+                key: BACKEND_TOKEN
+                name: asyncjob-secret
+          - name: PENDING_BUCKET
+            valueFrom:
+              secretKeyRef:
+                key: PENDING_BUCKET
+                name: asyncjob-secret
+          - name: COMPLETED_BUCKET
+            valueFrom:
+              secretKeyRef:
+                key: COMPLETED_BUCKET
+                name: asyncjob-secret
+          - name: BACKEND
+            valueFrom:
+              secretKeyRef:
+                key: BACKEND
+                name: asyncjob-secret
+          ports:
+            - containerPort: 5000
+              name: ibmqo
