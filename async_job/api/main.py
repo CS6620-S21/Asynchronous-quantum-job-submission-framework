@@ -33,7 +33,7 @@ except Exception as ex:
 def init_backend():
     """Returns the backend to work with in the cron job"""
     token=os.getenv('BACKEND_TOKEN')
-    IBMQ.save_account(token)
+    IBMQ.save_account(token, overwrite=True)
     IBMQ.load_account()
     provider = IBMQ.get_provider(hub='ibm-q')
     IBMQ.get_provider(group='open')

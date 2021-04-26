@@ -1,5 +1,9 @@
 To build the docker file, run
 ```
-docker build -f templates/Dockerfile.main . -t "targtetname22" 
+docker build -f templates/Dockerfile.cronjob . -t "targtetname" 
 ```
-from the root directory.
+
+To run the docker image,
+```
+docker run "targetname"
+```
