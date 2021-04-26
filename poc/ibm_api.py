@@ -21,9 +21,6 @@ print("Selecting backend ibmq_qasm_simulator...")
 backend = provider.get_backend('ibmq_qasm_simulator')
 print(backend)
 
-#Submitting a job
-#job = execute(qc, backend) (Synchronous)
-
 #Asynchronous using run
 qc = QuantumCircuit(2, 2)
 qc.h(0)
